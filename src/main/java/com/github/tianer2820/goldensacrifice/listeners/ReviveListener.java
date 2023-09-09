@@ -12,7 +12,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,13 +24,11 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
 import com.github.tianer2820.goldensacrifice.GoldenSacrifice;
-import com.github.tianer2820.goldensacrifice.constants.CommonConstants;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion_splash;
 
@@ -194,7 +191,7 @@ public class ReviveListener implements Listener {
         }
         if(p == null) return;
         debuglog(p, event.getEventName());
-        if(Bukkit.getWorlds().get(0).getPersistentDataContainer().get(new NamespacedKey(GoldenSacrifice.getInstance(), p.getUniqueId().toString()), PersistentDataType.BOOLEAN) == true){
+        if(Bukkit.getWorlds().get(0).getPersistentDataContainer().getOrDefault(new NamespacedKey(GoldenSacrifice.getInstance(), p.getUniqueId().toString()), PersistentDataType.BOOLEAN, false) == true){
             event.setCancelled(true);
         }
     }
@@ -203,7 +200,7 @@ public class ReviveListener implements Listener {
     public void onDeath(PlayerDeathEvent event){
         Player p = event.getPlayer();
         debuglog(p, event.getEventName());
-        if(Bukkit.getWorlds().get(0).getPersistentDataContainer().get(new NamespacedKey(GoldenSacrifice.getInstance(), p.getUniqueId().toString()), PersistentDataType.BOOLEAN) == true){
+        if(Bukkit.getWorlds().get(0).getPersistentDataContainer().getOrDefault(new NamespacedKey(GoldenSacrifice.getInstance(), p.getUniqueId().toString()), PersistentDataType.BOOLEAN, false) == true){
             Bukkit.getWorlds().get(0).getPersistentDataContainer().set(new NamespacedKey(GoldenSacrifice.getInstance(), p.getUniqueId().toString()), PersistentDataType.BOOLEAN, false);
         }
     }

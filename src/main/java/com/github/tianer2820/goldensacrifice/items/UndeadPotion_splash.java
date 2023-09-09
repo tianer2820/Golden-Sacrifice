@@ -32,6 +32,6 @@ public class UndeadPotion_splash {
             return false;
         }
         return CommonConstants.UNDEAD_POTION_SPLASH.equals(
-                stack.getItemMeta().getPersistentDataContainer().get(CommonConstants.ITEM_ID_KEY, PersistentDataType.STRING));
+                stack.getItemMeta().getPersistentDataContainer().getOrDefault(CommonConstants.ITEM_ID_KEY, PersistentDataType.STRING, ""));
     }
 }

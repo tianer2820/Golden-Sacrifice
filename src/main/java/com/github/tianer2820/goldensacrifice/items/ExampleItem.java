@@ -34,6 +34,6 @@ public class ExampleItem {
             return false;
         }
         return CommonConstants.EXAMPLE_ITEM.equals(
-                stack.getItemMeta().getPersistentDataContainer().get(CommonConstants.ITEM_ID_KEY, PersistentDataType.STRING));
+                stack.getItemMeta().getPersistentDataContainer().getOrDefault(CommonConstants.ITEM_ID_KEY, PersistentDataType.STRING, ""));
     }
 }

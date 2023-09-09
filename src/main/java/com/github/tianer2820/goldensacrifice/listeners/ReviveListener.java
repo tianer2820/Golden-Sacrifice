@@ -59,7 +59,7 @@ public class ReviveListener implements Listener {
     public void onInteract(PlayerInteractEvent event){
         Player p = event.getPlayer();
         debuglog(p, event.getEventName());
-        PotionEffect pe = p.getPotionEffect(PotionEffectType.WEAKNESS);
+        PotionEffect pe = p.getPotionEffect(PotionEffectType.HUNGER);
         if(pe == null) return;
         if(pe.getDuration() < 1000000000) return;
 
@@ -77,9 +77,10 @@ public class ReviveListener implements Listener {
                 if(rp == null) return;
                 debuglog(p, "PLAYER ONLINE, REVIVING");
                 rp.setGameMode(GameMode.SURVIVAL);
-                rp.teleport(rp.getBedSpawnLocation());
+                Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
+                rp.teleport(spawn);
                 zombiefy(rp);
-                p.removePotionEffect(PotionEffectType.WEAKNESS);
+                p.removePotionEffect(PotionEffectType.HUNGER);
             }
         } else {
             debuglog(p, "NOT A PLAYER HEAD");
@@ -102,7 +103,7 @@ public class ReviveListener implements Listener {
             //     debuglog(p, "WTF DID YOU HIT??");
             //     return;
             // }
-            ArrayList<Entity> ets = (ArrayList<Entity>) event.getPotion().getLocation().getNearbyEntities(2, 2, 2);
+            ArrayList<Entity> ets = (ArrayList<Entity>) event.getPotion().getLocation().getNearbyEntities(1, 1, 1);
             if(ets != null){
                 debuglog(p, "FOUND ENTITIES NEARBY");
             }
@@ -120,11 +121,12 @@ public class ReviveListener implements Listener {
             // detect playerhead blocks nearby
             ArrayList<Block> headblks = new ArrayList<>();
             Location loc = event.getPotion().getLocation();
-            for(int i = -2; i < 3; i++){
-                for(int j = -2; j < 3; j++){
-                    for(int k = -2; k < 3; k++){
-                        Block blk = loc.add(i, j, k).getBlock();
+            for(int i = -1; i < 2; i++){
+                for(int j = -1; j < 2; j++){
+                    for(int k = -1; k < 2; k++){
+                        Block blk = loc.clone().add(i, j, k).getBlock();
                         if(blk.getType() == Material.PLAYER_HEAD || blk.getType() == Material.PLAYER_WALL_HEAD){
+                            debuglog(p, "FOUND PLAYER HEAD");
                             headblks.add(blk);
                         }
                     }
@@ -142,7 +144,8 @@ public class ReviveListener implements Listener {
                 if(rp == null) return;
                 debuglog(p, "PLAYER ONLINE, REVIVING");
                 rp.setGameMode(GameMode.SURVIVAL);
-                rp.teleport(rp.getBedSpawnLocation());
+                Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
+                rp.teleport(spawn);
                 zombiefy(rp);
             }
 
@@ -157,9 +160,10 @@ public class ReviveListener implements Listener {
                     if(rp == null) return;
                     debuglog(p, "PLAYER ONLINE, REVIVING");
                     rp.setGameMode(GameMode.SURVIVAL);
-                    rp.teleport(rp.getBedSpawnLocation());
+                    Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
+                    rp.teleport(spawn);
                     zombiefy(rp);
-                    p.removePotionEffect(PotionEffectType.WEAKNESS);
+                    p.removePotionEffect(PotionEffectType.HUNGER);
                 }
             }
 

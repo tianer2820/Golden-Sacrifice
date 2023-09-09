@@ -2,11 +2,16 @@ package com.github.tianer2820.goldensacrifice;
 
 
 
+import org.bukkit.Material;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.tianer2820.goldensacrifice.constants.CommonConstants;
+import com.github.tianer2820.goldensacrifice.items.UndeadPotion;
+import com.github.tianer2820.goldensacrifice.items.UndeadPotion_splash;
+import com.github.tianer2820.goldensacrifice.listeners.ReviveListener;
 import com.github.tianer2820.goldensacrifice.listeners.SacrificeListener;
 
 
@@ -41,8 +46,26 @@ public class GoldenSacrifice extends JavaPlugin implements Listener{
     private void registerListeners(){
         PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new SacrificeListener(), this);
+        manager.registerEvents(new ReviveListener(), this);
     }
 
     private void registerRecipies(){
+        // undead potion
+        ShapedRecipe recipe = new ShapedRecipe(CommonConstants.UNDEAD_POTION_RECIPE_KEY, UndeadPotion.getItemStack(1));
+        recipe.shape(
+                "P",
+                "S");
+        recipe.setIngredient('P', Material.POTION);
+        recipe.setIngredient('S', Material.SOUL_SAND);
+        getServer().addRecipe(recipe);
+
+        // undead potion splash
+        ShapedRecipe recipe2 = new ShapedRecipe(CommonConstants.UNDEAD_POTION_SPLASH_RECIPE_KEY, UndeadPotion_splash.getItemStack(1));
+        recipe2.shape(
+                "P",
+                "S");
+        recipe2.setIngredient('P', Material.SPLASH_POTION);
+        recipe2.setIngredient('S', Material.SOUL_SAND);
+        getServer().addRecipe(recipe2);
     }
 }

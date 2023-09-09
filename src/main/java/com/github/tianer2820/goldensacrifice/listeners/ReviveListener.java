@@ -74,8 +74,10 @@ public class ReviveListener implements Listener {
                 if(rp == null) return;
                 debuglog(p, "PLAYER ONLINE, REVIVING");
                 rp.setGameMode(GameMode.SURVIVAL);
-                Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
-                rp.teleport(spawn);
+                // Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
+                // rp.teleport(spawn);
+                rp.teleport(blk.getLocation());
+                blk.setType(Material.AIR);
                 zombiefy(rp);
                 p.removePotionEffect(PotionEffectType.HUNGER);
             }
@@ -141,8 +143,11 @@ public class ReviveListener implements Listener {
                 if(rp == null) return;
                 debuglog(p, "PLAYER ONLINE, REVIVING");
                 rp.setGameMode(GameMode.SURVIVAL);
-                Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
-                rp.teleport(spawn);
+                // Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
+                // rp.teleport(spawn);
+                rp.teleport(it.getLocation());
+                it.remove();
+                
                 zombiefy(rp);
             }
 
@@ -157,8 +162,10 @@ public class ReviveListener implements Listener {
                     if(rp == null) return;
                     debuglog(p, "PLAYER ONLINE, REVIVING");
                     rp.setGameMode(GameMode.SURVIVAL);
-                    Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
-                    rp.teleport(spawn);
+                    // Location spawn = (rp.getBedSpawnLocation() == null) ? Bukkit.getWorlds().get(0).getSpawnLocation() : rp.getBedSpawnLocation();
+                    // rp.teleport(spawn);
+                    rp.teleport(bl.getLocation());
+                    bl.setType(Material.AIR);
                     zombiefy(rp);
                     p.removePotionEffect(PotionEffectType.HUNGER);
                 }

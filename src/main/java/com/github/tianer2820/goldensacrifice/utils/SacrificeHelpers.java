@@ -35,6 +35,10 @@ public class SacrificeHelpers {
         .put(Material.MANGROVE_LEAVES, 1)
         .put(Material.AZALEA_LEAVES, 1)
         .put(Material.FLOWERING_AZALEA_LEAVES, 1)
+        // grass & flowers
+        .put(Material.GRASS, 1)
+        .put(Material.TALL_GRASS, 1)
+        .put(Material.SEAGRASS, 1)
         // Crops
         .put(Material.WHEAT, 2)
         .put(Material.CARROT, 2)
@@ -183,7 +187,7 @@ public class SacrificeHelpers {
                     block.setType(Material.AIR);
                     energyCollected += energy;
                 }
-                
+
                 // replace other blocks
                 else if(MATERIALS_TO_REPLACE.contains(blockType)){
                     int idx = rng.nextInt(REPLACE_POOL.size());

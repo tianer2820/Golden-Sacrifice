@@ -92,31 +92,32 @@ public class SacrificeHelpers {
     }
 
     public static boolean tryBeginSacrifice(Block headBlock){
+        GoldenSacrifice.getInstance().getLogger().info(String.format("Try begin sacrifice at %d,%d,%d", headBlock.getX(), headBlock.getY(), headBlock.getZ()));
         // detect valid altar
         Set<Block> altarBlocks = detectValidAltar(headBlock);
         if(altarBlocks.isEmpty()){
-            GoldenSacrifice.getInstance().getLogger().info("not altar");
+            GoldenSacrifice.getInstance().getLogger().info("Not a valid altar");
             return false;
-        }
-        GoldenSacrifice.getInstance().getLogger().info("Is valid altar! ");
-        
+        }        
         // detect valid player
         Skull skull = (Skull)headBlock.getState();
         OfflinePlayer offlinePlayer = skull.getOwningPlayer();
         if(offlinePlayer == null){
-            GoldenSacrifice.getInstance().getLogger().info("no player");
+            GoldenSacrifice.getInstance().getLogger().info("Skull does not have player info");
             return false;
         }
         Player player = offlinePlayer.getPlayer();
         if(player == null){
+            GoldenSacrifice.getInstance().getLogger().info("Player not online");
             return false;
         }
         if(player.getGameMode() != GameMode.SPECTATOR){
+            GoldenSacrifice.getInstance().getLogger().info("Player not in spectator mode");
             return false;
         }
 
         // begin the sacrifice process
-        GoldenSacrifice.getInstance().getLogger().info("tasks running");
+        GoldenSacrifice.getInstance().getLogger().info("Sacrifice task started");
         protectedAltarBlocks.addAll(altarBlocks);
         new SacrificeRunnable(headBlock, player, altarBlocks).runTaskTimer(GoldenSacrifice.getInstance(), 0, 20);
         return true;

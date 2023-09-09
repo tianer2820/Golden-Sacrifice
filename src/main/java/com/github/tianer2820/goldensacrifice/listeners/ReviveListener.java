@@ -50,7 +50,7 @@ public class ReviveListener implements Listener {
         Player p = event.getPlayer();
         debuglog(p, event.getEventName());
         if(UndeadPotion.isItem(i)){
-            p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 0));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0));
             
         }
     }
@@ -172,7 +172,13 @@ public class ReviveListener implements Listener {
         w.getPersistentDataContainer().set(nKey, PersistentDataType.BOOLEAN, true);
 
         p.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, Integer.MAX_VALUE, 0));
-        debuglog(p, "YOU ARE ZOMBIEFIED!");
+        p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, 2));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Integer.MAX_VALUE, 2));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.UNLUCK, Integer.MAX_VALUE, 2));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 2));
+        // debuglog(p, "YOU ARE ZOMBIEFIED!");
+        p.sendMessage("YOU ARE ZOMBIEFIED!");
     }
 
 

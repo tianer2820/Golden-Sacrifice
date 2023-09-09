@@ -40,7 +40,7 @@ public class SacrificeHelpers {
         .put(Material.CARROT, 2)
         .put(Material.POTATO, 2)
         // Special blocks
-        .put(Material.HAY_BLOCK, 20)
+        .put(Material.HAY_BLOCK, 2)
         // Add more
         .build();
 
@@ -155,7 +155,7 @@ public class SacrificeHelpers {
         private int progress = 0;
         private int energyCollected = 0;
 
-        private static final int ENERGY_NEEDED = 100;
+        private static final int ENERGY_NEEDED = 128;
         private static final int RANGE_LIMIT = 32;
 
         public SacrificeRunnable(Block headBlock, Player player, Set<Block> altarBlocks){
@@ -166,6 +166,12 @@ public class SacrificeHelpers {
 
         @Override
         public void run() {
+            // check if player is still online
+            if (!player.isValid()){
+                cancel();
+                protectedAltarBlocks.removeAll(altarBlocks);
+            }
+            
             // limit the range
             progress += 1;
             if(progress > RANGE_LIMIT){

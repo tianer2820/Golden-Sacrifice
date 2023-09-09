@@ -1,0 +1,9 @@
+name: GoldenSacrifice
+version: 0.1.0
+main: com.github.tianer2820.goldensacrifice.GoldenSacrifice
+description: Respawn in the help of a mythical natural force...
+author: tianer2820
+website: https://github.com/tianer2820/Golden-Sacrifice
+api-version: '1.20'
+
+commands:

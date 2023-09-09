@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.tianer2820.goldensacrifice.constants.CommonConstants;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion;
-import com.github.tianer2820.goldensacrifice.items.UndeadPotion_splash;
+import com.github.tianer2820.goldensacrifice.items.UndeadPotionSplash;
 import com.github.tianer2820.goldensacrifice.listeners.ReviveListener;
 import com.github.tianer2820.goldensacrifice.listeners.SacrificeListener;
 
@@ -60,7 +60,7 @@ public class GoldenSacrifice extends JavaPlugin implements Listener{
         getServer().addRecipe(recipe);
 
         // undead potion splash
-        ShapedRecipe recipe2 = new ShapedRecipe(CommonConstants.UNDEAD_POTION_SPLASH_RECIPE_KEY, UndeadPotion_splash.getItemStack(1));
+        ShapedRecipe recipe2 = new ShapedRecipe(CommonConstants.UNDEAD_POTION_SPLASH_RECIPE_KEY, UndeadPotionSplash.getItemStack(1));
         recipe2.shape(
                 "P",
                 "S");

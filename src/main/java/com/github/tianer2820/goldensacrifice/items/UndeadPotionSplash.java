@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class UndeadPotion_splash {
+public class UndeadPotionSplash {
         public static @Nonnull ItemStack getItemStack(int count){
         ItemStack stack = new ItemStack(Material.SPLASH_POTION, count);
 

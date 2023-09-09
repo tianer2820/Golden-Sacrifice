@@ -111,9 +111,9 @@ public class SacrificeHelpers {
         if(player == null){
             return false;
         }
-        // if(player.getGameMode() != GameMode.SPECTATOR){
-        //     return;
-        // }
+        if(player.getGameMode() != GameMode.SPECTATOR){
+            return false;
+        }
 
         // begin the sacrifice process
         GoldenSacrifice.getInstance().getLogger().info("tasks running");

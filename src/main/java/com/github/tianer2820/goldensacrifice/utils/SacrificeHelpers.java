@@ -35,10 +35,6 @@ public class SacrificeHelpers {
         .put(Material.MANGROVE_LEAVES, 1)
         .put(Material.AZALEA_LEAVES, 1)
         .put(Material.FLOWERING_AZALEA_LEAVES, 1)
-        // grass & flowers
-        .put(Material.GRASS, 1)
-        .put(Material.TALL_GRASS, 1)
-        .put(Material.SEAGRASS, 1)
         // Crops
         .put(Material.WHEAT, 2)
         .put(Material.CARROT, 2)
@@ -210,22 +206,31 @@ public class SacrificeHelpers {
         private Set<Location> getCubeShellLocations(Location center, int radius){
             Set<Location> locations = new HashSet<>();
             int cx = center.getBlockX();
+            int cy = center.getBlockY();
             int cz = center.getBlockZ();
 
-            for (int h = -radius; h <= radius; h++) {
+            // top and bottom cap
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    locations.add(new Location(center.getWorld(), cx + dx, cy + radius, cz + dz));
+                    locations.add(new Location(center.getWorld(), cx + dx, cy - radius, cz + dz));
+                }
+            }
+            // walls
+            for (int h = -(radius - 1); h <= (radius - 1); h++) {
                 int layer = center.getBlockY() + h;
 
                 for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx+i, layer, cz-radius));
+                    locations.add(new Location(center.getWorld(), cx + i, layer, cz - radius));
                 }
                 for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx+radius, layer, cz+i));
+                    locations.add(new Location(center.getWorld(), cx + radius, layer, cz + i));
                 }
                 for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx-i, layer, cz+radius));
+                    locations.add(new Location(center.getWorld(), cx - i, layer, cz + radius));
                 }
                 for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx-radius, layer, cz-i));
+                    locations.add(new Location(center.getWorld(), cx - radius, layer, cz - i));
                 }
             }
             return locations;

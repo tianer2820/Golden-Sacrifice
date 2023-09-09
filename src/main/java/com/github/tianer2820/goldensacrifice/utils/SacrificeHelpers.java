@@ -2,7 +2,9 @@ package com.github.tianer2820.goldensacrifice.utils;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.GameMode;
@@ -16,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.github.tianer2820.goldensacrifice.GoldenSacrifice;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -39,6 +42,19 @@ public class SacrificeHelpers {
         // Special blocks
         .put(Material.HAY_BLOCK, 20)
         // Add more
+        .build();
+
+    // these blocks will be replaced
+    private static final Set<Material> MATERIALS_TO_REPLACE = new ImmutableSet.Builder<Material>()
+        .add(Material.GRASS_BLOCK)
+        .add(Material.FARMLAND)
+        .build();
+    // these are choosen randomly to replace the above blocks
+    private static final List<Material> REPLACE_POOL = new ImmutableList.Builder<Material>()
+        .add(Material.SAND)
+        .add(Material.GRAVEL)
+        .add(Material.COBBLESTONE)
+        .add(Material.COARSE_DIRT)
         .build();
 
     private static final Set<Block> protectedAltarBlocks = new HashSet<>();
@@ -129,6 +145,8 @@ public class SacrificeHelpers {
      * The background sacrifice process
      */
     private static class SacrificeRunnable extends BukkitRunnable{
+        private final Random rng = new Random();
+
         private Block headBlock;
         private Player player;
         Set<Block> altarBlocks;
@@ -158,10 +176,18 @@ public class SacrificeHelpers {
             getCubeShellLocations(headBlock.getLocation(), progress).forEach(location -> {
                 Block block = location.getBlock();
                 Material blockType = block.getType();
+
+                // cumulate energy
                 int energy = MATERIAL_TO_ENERGY_MAP.getOrDefault(blockType, 0);
                 if(energy > 0){
                     block.setType(Material.AIR);
                     energyCollected += energy;
+                }
+                
+                // replace other blocks
+                else if(MATERIALS_TO_REPLACE.contains(blockType)){
+                    int idx = rng.nextInt(REPLACE_POOL.size());
+                    block.setType(REPLACE_POOL.get(idx));
                 }
             });
 

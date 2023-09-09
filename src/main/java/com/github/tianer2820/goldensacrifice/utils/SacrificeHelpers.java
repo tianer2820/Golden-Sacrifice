@@ -2,8 +2,6 @@ package com.github.tianer2820.goldensacrifice.utils;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -18,45 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.github.tianer2820.goldensacrifice.GoldenSacrifice;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.github.tianer2820.goldensacrifice.constants.BlockCollectionConstants;
+import com.github.tianer2820.goldensacrifice.constants.ConfigConstants;
 import com.google.common.collect.ImmutableSet;
 
 public class SacrificeHelpers {
-    private static final Map<Material, Integer> MATERIAL_TO_ENERGY_MAP = new ImmutableMap.Builder<Material, Integer>()
-        // Leaves
-        .put(Material.OAK_LEAVES, 1)
-        .put(Material.SPRUCE_LEAVES, 1)
-        .put(Material.BIRCH_LEAVES, 1)
-        .put(Material.JUNGLE_LEAVES, 1)
-        .put(Material.ACACIA_LEAVES, 1)
-        .put(Material.CHERRY_LEAVES, 1)
-        .put(Material.DARK_OAK_LEAVES, 1)
-        .put(Material.MANGROVE_LEAVES, 1)
-        .put(Material.AZALEA_LEAVES, 1)
-        .put(Material.FLOWERING_AZALEA_LEAVES, 1)
-        // Crops
-        .put(Material.WHEAT, 2)
-        .put(Material.CARROT, 2)
-        .put(Material.POTATO, 2)
-        // Special blocks
-        .put(Material.HAY_BLOCK, 2)
-        // Add more
-        .build();
-
-    // these blocks will be replaced
-    private static final Set<Material> MATERIALS_TO_REPLACE = new ImmutableSet.Builder<Material>()
-        .add(Material.GRASS_BLOCK)
-        .add(Material.FARMLAND)
-        .build();
-    // these are choosen randomly to replace the above blocks
-    private static final List<Material> REPLACE_POOL = new ImmutableList.Builder<Material>()
-        .add(Material.SAND)
-        .add(Material.GRAVEL)
-        .add(Material.COBBLESTONE)
-        .add(Material.COARSE_DIRT)
-        .build();
-
     private static final Set<Block> protectedAltarBlocks = new HashSet<>();
 
     public static boolean isValidAltar(Block headBlock){
@@ -155,9 +119,6 @@ public class SacrificeHelpers {
         private int progress = 0;
         private int energyCollected = 0;
 
-        private static final int ENERGY_NEEDED = 128;
-        private static final int RANGE_LIMIT = 32;
-
         public SacrificeRunnable(Block headBlock, Player player, Set<Block> altarBlocks){
             this.headBlock = headBlock;
             this.player = player;
@@ -171,10 +132,10 @@ public class SacrificeHelpers {
                 cancel();
                 protectedAltarBlocks.removeAll(altarBlocks);
             }
-            
+
             // limit the range
             progress += 1;
-            if(progress > RANGE_LIMIT){
+            if(progress > ConfigConstants.ENERGY_SEARCH_RANGE_LIMIT){
                 cancel();
                 protectedAltarBlocks.removeAll(altarBlocks);
             }
@@ -185,21 +146,21 @@ public class SacrificeHelpers {
                 Material blockType = block.getType();
 
                 // cumulate energy
-                int energy = MATERIAL_TO_ENERGY_MAP.getOrDefault(blockType, 0);
+                int energy = BlockCollectionConstants.MATERIAL_TO_ENERGY_MAP.getOrDefault(blockType, 0);
                 if(energy > 0){
                     block.setType(Material.AIR);
                     energyCollected += energy;
                 }
 
                 // replace other blocks
-                else if(MATERIALS_TO_REPLACE.contains(blockType)){
-                    int idx = rng.nextInt(REPLACE_POOL.size());
-                    block.setType(REPLACE_POOL.get(idx));
+                else if(BlockCollectionConstants.MATERIALS_TO_BE_REPLACED.contains(blockType)){
+                    int idx = rng.nextInt(BlockCollectionConstants.WITHERED_MATERIALS.size());
+                    block.setType(BlockCollectionConstants.WITHERED_MATERIALS.get(idx));
                 }
             });
 
             // respawn if energy is full
-            if(energyCollected >= ENERGY_NEEDED && player.isValid()){
+            if(energyCollected >= ConfigConstants.SACRIFICE_ENERGY_NEEDED && player.isValid()){
                 // do respawn player
                 headBlock.setType(Material.AIR);
                 player.teleport(headBlock.getLocation());
@@ -241,6 +202,5 @@ public class SacrificeHelpers {
             }
             return locations;
         }
-
     }
 }

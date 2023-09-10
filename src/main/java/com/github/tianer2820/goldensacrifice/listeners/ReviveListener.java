@@ -11,6 +11,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Drowned;
+import org.bukkit.entity.ElderGuardian;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Evoker;
 import org.bukkit.entity.Guardian;
@@ -38,9 +41,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Drowned;
-import org.bukkit.entity.ElderGuardian;
 
 import com.github.tianer2820.goldensacrifice.GoldenSacrifice;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion;
@@ -107,15 +107,7 @@ public class ReviveListener implements Listener {
         debuglog(p, event.getEventName());
         if(UndeadPotion_splash.isItem(event.getPotion().getItem())){
             debuglog(p, "THROWN UNDEAD POTION");
-            // Block blk = event.getHitBlock();
-            // Entity en = null;
-            // if(blk == null) {
-            //     en = event.getHitEntity();
-            // }
-            // if(en == null){
-            //     debuglog(p, "WTF DID YOU HIT??");
-            //     return;
-            // }
+
             ArrayList<Entity> ets = (ArrayList<Entity>) event.getPotion().getLocation().getNearbyEntities(1, 1, 1);
             if(ets != null){
                 debuglog(p, "FOUND ENTITIES NEARBY");
@@ -226,14 +218,6 @@ public class ReviveListener implements Listener {
         }
     }
 
-
-    // private ArrayList<LivingEntity> hostiles = new ArrayList<>();
-
-    // private void initializeHostiles(){
-    //     if(hostiles.size() == 0){
-    //         hostiles.add(new IronGolem())
-    //     }
-    // }
     private enum Hostiles{ // for zombiefied players
         IRONGOLEM(IronGolem.class),
         SNOWMAN(Snowman.class),

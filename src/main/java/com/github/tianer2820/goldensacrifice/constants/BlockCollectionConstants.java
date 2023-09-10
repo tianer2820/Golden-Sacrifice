@@ -25,9 +25,9 @@ public class BlockCollectionConstants {
         .put(Material.AZALEA_LEAVES, 1)
         .put(Material.FLOWERING_AZALEA_LEAVES, 1)
         // Crops
-        .put(Material.WHEAT, 2)
-        .put(Material.CARROT, 2)
-        .put(Material.POTATO, 2)
+        .put(Material.WHEAT, 5)
+        .put(Material.CARROT, 5)
+        .put(Material.POTATO, 5)
         // Special blocks
         .put(Material.HAY_BLOCK, 2)
         // Add more
@@ -37,6 +37,7 @@ public class BlockCollectionConstants {
     public static final Set<Material> MATERIALS_TO_BE_REPLACED = new ImmutableSet.Builder<Material>()
         .add(Material.GRASS_BLOCK)
         .add(Material.FARMLAND)
+        .add(Material.DIRT)
         .build();
         
     // these are chosen randomly to replace the above blocks

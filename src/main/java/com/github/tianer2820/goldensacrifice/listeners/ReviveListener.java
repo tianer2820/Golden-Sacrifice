@@ -59,6 +59,23 @@ public class ReviveListener implements Listener {
     public void onConsume(PlayerItemConsumeEvent event){
         ItemStack i = event.getItem();
         Player p = event.getPlayer();
+        if(Bukkit.getWorlds().get(0).getPersistentDataContainer().getOrDefault(new NamespacedKey(GoldenSacrifice.getInstance(), p.getUniqueId().toString()), PersistentDataType.BOOLEAN, false) == true){
+            if(i.getType() == Material.MILK_BUCKET){
+                p.damage(3);
+                ItemStack milkBucket = new ItemStack(Material.MILK_BUCKET, 1);
+                p.getInventory().removeItem(milkBucket);
+                p.getInventory().addItem(new ItemStack(Material.BUCKET, 1));
+                event.setCancelled(true);
+                return;
+            } else if (i.getType() == Material.HONEY_BOTTLE){
+                p.damage(3);
+                ItemStack honeyBottle = new ItemStack(Material.HONEY_BOTTLE, 1);
+                p.getInventory().removeItem(honeyBottle);
+                p.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE, 1));
+                event.setCancelled(true);
+                return;
+            }
+        }
         debuglog(p, event.getEventName());
         if(UndeadPotion.isItem(i)){
             p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 0));

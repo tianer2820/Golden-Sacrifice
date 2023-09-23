@@ -23,9 +23,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pillager;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.Vindicator;
 import org.bukkit.entity.Witch;
 import org.bukkit.entity.WitherSkeleton;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zoglin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -238,15 +241,8 @@ public class ReviveListener implements Listener {
     private enum Hostiles{ // for zombiefied players
         IRONGOLEM(IronGolem.class),
         SNOWMAN(Snowman.class),
-        VINDICATOR(Vindicator.class),
-        EVOKER(Evoker.class),
-        WITCH(Witch.class),
-        PILLAGER(Pillager.class),
-        GUARGIAN(Guardian.class),
-        ELDERGUARDIAN(ElderGuardian.class),
-        DROWNED(Drowned.class),
-        WITHERSKELETON(WitherSkeleton.class);
-
+        VILLAGER(Villager.class),
+        ZOGLIN(Zoglin.class);                
         private final Class<? extends Entity> mobClass;
 
         Hostiles(Class<? extends Entity> mobClass) {

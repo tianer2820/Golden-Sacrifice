@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.github.tianer2820.goldensacrifice.constants.CommonConstants;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion_splash;
+import com.github.tianer2820.goldensacrifice.listeners.RecallListener;
 import com.github.tianer2820.goldensacrifice.listeners.ReviveListener;
 import com.github.tianer2820.goldensacrifice.listeners.SacrificeListener;
 
@@ -47,6 +48,7 @@ public class GoldenSacrifice extends JavaPlugin implements Listener{
         PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new SacrificeListener(), this);
         manager.registerEvents(new ReviveListener(), this);
+        manager.registerEvents(new RecallListener(), this);
     }
 
     private void registerRecipies(){

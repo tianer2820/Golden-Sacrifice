@@ -2,8 +2,6 @@ package com.github.tianer2820.goldensacrifice.utils;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -18,49 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.github.tianer2820.goldensacrifice.GoldenSacrifice;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.github.tianer2820.goldensacrifice.constants.BlockCollectionConstants;
+import com.github.tianer2820.goldensacrifice.constants.ConfigConstants;
 import com.google.common.collect.ImmutableSet;
 
 public class SacrificeHelpers {
-    private static final Map<Material, Integer> MATERIAL_TO_ENERGY_MAP = new ImmutableMap.Builder<Material, Integer>()
-        // Leaves
-        .put(Material.OAK_LEAVES, 1)
-        .put(Material.SPRUCE_LEAVES, 1)
-        .put(Material.BIRCH_LEAVES, 1)
-        .put(Material.JUNGLE_LEAVES, 1)
-        .put(Material.ACACIA_LEAVES, 1)
-        .put(Material.CHERRY_LEAVES, 1)
-        .put(Material.DARK_OAK_LEAVES, 1)
-        .put(Material.MANGROVE_LEAVES, 1)
-        .put(Material.AZALEA_LEAVES, 1)
-        .put(Material.FLOWERING_AZALEA_LEAVES, 1)
-        // grass & flowers
-        .put(Material.GRASS, 1)
-        .put(Material.TALL_GRASS, 1)
-        .put(Material.SEAGRASS, 1)
-        // Crops
-        .put(Material.WHEAT, 2)
-        .put(Material.CARROT, 2)
-        .put(Material.POTATO, 2)
-        // Special blocks
-        .put(Material.HAY_BLOCK, 20)
-        // Add more
-        .build();
-
-    // these blocks will be replaced
-    private static final Set<Material> MATERIALS_TO_REPLACE = new ImmutableSet.Builder<Material>()
-        .add(Material.GRASS_BLOCK)
-        .add(Material.FARMLAND)
-        .build();
-    // these are choosen randomly to replace the above blocks
-    private static final List<Material> REPLACE_POOL = new ImmutableList.Builder<Material>()
-        .add(Material.SAND)
-        .add(Material.GRAVEL)
-        .add(Material.COBBLESTONE)
-        .add(Material.COARSE_DIRT)
-        .build();
-
     private static final Set<Block> protectedAltarBlocks = new HashSet<>();
 
     public static boolean isValidAltar(Block headBlock){
@@ -111,8 +71,8 @@ public class SacrificeHelpers {
             GoldenSacrifice.getInstance().getLogger().info("Player not online");
             return false;
         }
-        if(player.getGameMode() != GameMode.SPECTATOR){
-            GoldenSacrifice.getInstance().getLogger().info("Player not in spectator mode");
+        if(player.getGameMode() == GameMode.SURVIVAL){
+            GoldenSacrifice.getInstance().getLogger().info("Player already in survival mode");
             return false;
         }
 
@@ -159,9 +119,6 @@ public class SacrificeHelpers {
         private int progress = 0;
         private int energyCollected = 0;
 
-        private static final int ENERGY_NEEDED = 100;
-        private static final int RANGE_LIMIT = 32;
-
         public SacrificeRunnable(Block headBlock, Player player, Set<Block> altarBlocks){
             this.headBlock = headBlock;
             this.player = player;
@@ -170,34 +127,56 @@ public class SacrificeHelpers {
 
         @Override
         public void run() {
+            // check if player is still online
+            if (!player.isValid()){
+                cancel();
+                protectedAltarBlocks.removeAll(altarBlocks);
+            }
+
             // limit the range
             progress += 1;
-            if(progress > RANGE_LIMIT){
+            if(progress > ConfigConstants.ENERGY_SEARCH_RANGE_LIMIT){
                 cancel();
                 protectedAltarBlocks.removeAll(altarBlocks);
             }
             
             // check each block
-            getCubeShellLocations(headBlock.getLocation(), progress).forEach(location -> {
+            getCylinderShellLocations(headBlock.getLocation(), progress).forEach(location -> {
                 Block block = location.getBlock();
                 Material blockType = block.getType();
 
                 // cumulate energy
-                int energy = MATERIAL_TO_ENERGY_MAP.getOrDefault(blockType, 0);
+                int energy = BlockCollectionConstants.MATERIAL_TO_ENERGY_MAP.getOrDefault(blockType, 0);
                 if(energy > 0){
                     block.setType(Material.AIR);
                     energyCollected += energy;
                 }
 
                 // replace other blocks
-                else if(MATERIALS_TO_REPLACE.contains(blockType)){
-                    int idx = rng.nextInt(REPLACE_POOL.size());
-                    block.setType(REPLACE_POOL.get(idx));
+                else if(BlockCollectionConstants.MATERIALS_TO_BE_REPLACED.contains(blockType)){
+                    // decide if replace happens
+                    double chance = 10 / (block.getLocation().distance(headBlock.getLocation()) + 5);
+                    if (rng.nextDouble() < chance){
+                        int idx = rng.nextInt(BlockCollectionConstants.WITHERED_MATERIALS.size());
+                        block.setType(BlockCollectionConstants.WITHERED_MATERIALS.get(idx));
+                    }
+                }
+
+                // generate pillars
+                if(block.isSolid() && !(block.getRelative(0, 1, 0).isSolid())){
+                    Block above = block.getRelative(0, 1, 0);
+                    double distance = block.getLocation().distance(headBlock.getLocation());
+                    double chance = 3.0 / (distance + 10) - 0.02;
+                    if (rng.nextDouble() < chance && distance >= 6){
+                        // should make a pillar
+                        int height = (int)(chance * 60) + 1;
+                        makePillar(above, height, Material.OBSIDIAN);
+                    }
                 }
             });
 
             // respawn if energy is full
-            if(energyCollected >= ENERGY_NEEDED && player.isValid()){
+            if(energyCollected >= ConfigConstants.SACRIFICE_ENERGY_NEEDED && player.isValid()){
                 // do respawn player
                 headBlock.setType(Material.AIR);
                 player.teleport(headBlock.getLocation());
@@ -207,29 +186,63 @@ public class SacrificeHelpers {
             }
         }
 
-        private Set<Location> getCubeShellLocations(Location center, int radius){
-            Set<Location> locations = new HashSet<>();
-            int cx = center.getBlockX();
-            int cz = center.getBlockZ();
-
-            for (int h = -radius; h <= radius; h++) {
-                int layer = center.getBlockY() + h;
-
-                for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx+i, layer, cz-radius));
-                }
-                for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx+radius, layer, cz+i));
-                }
-                for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx-i, layer, cz+radius));
-                }
-                for (int i = -radius; i < radius; i++) {
-                    locations.add(new Location(center.getWorld(), cx-radius, layer, cz-i));
-                }
+        private void makePillar(Block base, int height, Material blockType){
+            for (int i = 0; i < height; i++) {
+                base.getRelative(0, i, 0).setType(blockType);
+                base.getRelative(0, -i, 0).setType(blockType);
             }
-            return locations;
         }
 
+        private Set<Location> getCylinderShellLocations(Location center, int radius){
+            Set<Location> locations = new HashSet<>();
+            int cx = center.getBlockX();
+            int cy = center.getBlockY();
+            int cz = center.getBlockZ();
+
+            for (int dx = 0; dx <= radius * 0.7071; dx++) {
+                int dz = (int)Math.sqrt(Math.pow(radius, 2) - Math.pow(dx, 2));
+                
+                // wall
+                for (int dy = -radius; dy < radius; dy++) {
+                    locations.add(new Location(center.getWorld(), cx + dx, cy + dy, cz + dz));
+                    locations.add(new Location(center.getWorld(), cx - dx, cy + dy, cz + dz));
+                    locations.add(new Location(center.getWorld(), cx + dx, cy + dy, cz - dz));
+                    locations.add(new Location(center.getWorld(), cx - dx, cy + dy, cz - dz));
+
+                    locations.add(new Location(center.getWorld(), cx + dz, cy + dy, cz + dx));
+                    locations.add(new Location(center.getWorld(), cx - dz, cy + dy, cz + dx));
+                    locations.add(new Location(center.getWorld(), cx + dz, cy + dy, cz - dx));
+                    locations.add(new Location(center.getWorld(), cx - dz, cy + dy, cz - dx));
+
+                }
+
+                // top & bottom
+                for (int i = 0; i < dz; i++) {
+                    // top
+                    locations.add(new Location(center.getWorld(), cx + dx, cy + radius, cz + (dz-i)));
+                    locations.add(new Location(center.getWorld(), cx - dx, cy + radius, cz + (dz-i)));
+                    locations.add(new Location(center.getWorld(), cx + dx, cy + radius, cz - (dz-i)));
+                    locations.add(new Location(center.getWorld(), cx - dx, cy + radius, cz - (dz-i)));
+
+                    locations.add(new Location(center.getWorld(), cx + (dz-i), cy + radius, cz + dx));
+                    locations.add(new Location(center.getWorld(), cx - (dz-i), cy + radius, cz + dx));
+                    locations.add(new Location(center.getWorld(), cx + (dz-i), cy + radius, cz - dx));
+                    locations.add(new Location(center.getWorld(), cx - (dz-i), cy + radius, cz - dx));
+
+                    // bottom
+                    locations.add(new Location(center.getWorld(), cx + dx, cy - radius, cz + (dz-i)));
+                    locations.add(new Location(center.getWorld(), cx - dx, cy - radius, cz + (dz-i)));
+                    locations.add(new Location(center.getWorld(), cx + dx, cy - radius, cz - (dz-i)));
+                    locations.add(new Location(center.getWorld(), cx - dx, cy - radius, cz - (dz-i)));
+
+                    locations.add(new Location(center.getWorld(), cx + (dz-i), cy - radius, cz + dx));
+                    locations.add(new Location(center.getWorld(), cx - (dz-i), cy - radius, cz + dx));
+                    locations.add(new Location(center.getWorld(), cx + (dz-i), cy - radius, cz - dx));
+                    locations.add(new Location(center.getWorld(), cx - (dz-i), cy - radius, cz - dx));
+                }
+            }
+
+            return locations;
+        }
     }
 }

@@ -47,7 +47,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import com.github.tianer2820.goldensacrifice.GoldenSacrifice;
 import com.github.tianer2820.goldensacrifice.items.UndeadPotion;
-import com.github.tianer2820.goldensacrifice.items.UndeadPotion_splash;
+import com.github.tianer2820.goldensacrifice.items.UndeadPotionSplash;
 
 
 public class ReviveListener implements Listener {
@@ -125,7 +125,7 @@ public class ReviveListener implements Listener {
         ProjectileSource ps = event.getEntity().getShooter();
         Player p = (ps instanceof Player) ? (Player)ps : null;
         debuglog(p, event.getEventName());
-        if(UndeadPotion_splash.isItem(event.getPotion().getItem())){
+        if(UndeadPotionSplash.isItem(event.getPotion().getItem())){
             debuglog(p, "THROWN UNDEAD POTION");
 
             ArrayList<Entity> ets = (ArrayList<Entity>) event.getPotion().getLocation().getNearbyEntities(1, 1, 1);

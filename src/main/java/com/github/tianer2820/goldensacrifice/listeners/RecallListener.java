@@ -44,6 +44,10 @@ public class RecallListener implements Listener{
         if(blk.getType() == Material.PLAYER_HEAD){
             return;
         }
+
+        if(p.getInventory().containsAtLeast(new ItemStack(Material.PLAYER_HEAD), 1)){
+            return;
+        }
         ArrayList<Player> players = (ArrayList<Player>) blk.getLocation().getNearbyPlayers(5);
         for (Player pl : players) {
             if(pl.getGameMode() == GameMode.SPECTATOR) {

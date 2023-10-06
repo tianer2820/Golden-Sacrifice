@@ -14,7 +14,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.event.Listener;
-
+import org.bukkit.event.block.Action;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,8 +37,13 @@ public class RecallListener implements Listener{
         PotionEffect pe = p.getPotionEffect(PotionEffectType.HUNGER);
         if(pe == null) return;
         if(pe.getDuration() < 1000000000) return;
-
+        if(event.getAction() != Action.RIGHT_CLICK_BLOCK){
+            return;
+        }
         Block blk = event.getClickedBlock();
+        if(blk.getType() == Material.PLAYER_HEAD){
+            return;
+        }
         ArrayList<Player> players = (ArrayList<Player>) blk.getLocation().getNearbyPlayers(5);
         for (Player pl : players) {
             if(pl.getGameMode() == GameMode.SPECTATOR) {
